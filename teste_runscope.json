@@ -1,0 +1,430 @@
+{
+  "trigger_url": "https://api.runscope.com/radar/2e5fe2e2-e4da-4393-9f37-c9ed202b2485/trigger", 
+  "name": "trixlog", 
+  "version": "1.0", 
+  "exported_at": 1543976430, 
+  "steps": [
+    {
+      "body": "{\r\n\"login\": \"{{ login }}\",\r\n\"password\": \"{{ password }}\"\r\n}\r\n", 
+      "skipped": false, 
+      "form": {}, 
+      "headers": {}, 
+      "fragment": "", 
+      "variables": [], 
+      "args": {}, 
+      "step_type": "request", 
+      "auth": {}, 
+      "multipart_form": [], 
+      "note": "POST login and password", 
+      "url": "http://qa.trixlog.com/login", 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [
+        "var data = response.body;\nvariables.set(\"token\", data.slice(46,78));\nvariables.set(\"id\", data.slice(90));\n"
+      ], 
+      "before_scripts": [], 
+      "data": "", 
+      "method": "POST"
+    }, 
+    {
+      "skipped": false, 
+      "headers": {}, 
+      "url": "http://qa-trix2.trixlog.com/trix//login", 
+      "variables": [
+        {
+          "source": "response_headers", 
+          "property": "Location", 
+          "name": "redirect_url"
+        }
+      ], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "note": "GET redirect_url", 
+      "fragment": "", 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": "302", 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [
+        "request.params.push({name: \"token\", value: variables.get(\"token\")});\nrequest.params.push({name: \"customerId\", value: variables.get(\"id\")});"
+      ], 
+      "method": "GET"
+    }, 
+    {
+      "skipped": false, 
+      "url": "{{redirect_url}}", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "redirect to url", 
+      "headers": {}, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "GET"
+    }, 
+    {
+      "body": "{\r\n\t\"phone\":\"+55 \",\r\n\t\"name\":\"Renan\",\r\n\t\"login\":\"renan@teste\",\r\n\t\"password\":\"teste\",\r\n\t\"organization\": {\r\n\t\t\"id\":1,\r\n\t\t\"parentOrganization\": {\r\n\t\t\t\"id\":10020\r\n\t\t},\r\n\t\t\"name\":\"colaboradores\",\r\n\t\t\"description\":\"Colaboradores Trixlog 2\",\r\n\t\t\"email\":\"qualidade@trixlog.com\",\r\n\t\t\"phone\":\"+55 88765756745674\",\r\n\t\t\"tags\":\"\"\r\n\t},\r\n\t\"email\":\"teste@mail.com\",\r\n\t\"groups\":[{\"id\":44}]\r\n}", 
+      "skipped": false, 
+      "form": {}, 
+      "url": "https://qa-trix2.trixlog.com/trix/user", 
+      "variables": [
+        {
+          "source": "response_json", 
+          "property": "id", 
+          "name": "user_id"
+        }
+      ], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "CREATE USER", 
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      }, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "POST"
+    }, 
+    {
+      "skipped": false, 
+      "headers": {}, 
+      "url": "http://qa-trix2.trixlog.com/trix/user/{{user_id}}", 
+      "variables": [
+        {
+          "source": "response_json", 
+          "property": "lastGroupModified", 
+          "name": "lastGroupModified"
+        }, 
+        {
+          "source": "response_json", 
+          "property": "created", 
+          "name": "created"
+        }
+      ], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "note": "VALIDATE USER CREATION", 
+      "fragment": "", 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "GET"
+    }, 
+    {
+      "body": "{\r\n\t\"phone\":\"+55 \",\r\n\t\"name\":\"teste\",\r\n\t\"login\":\"renan@teste\",\r\n\t\"password\":\"teste\",\r\n\t\"organization\": {\r\n\t\t\"id\":1,\r\n\t\t\"parentOrganization\": {\r\n\t\t\t\"id\":10020\r\n\t\t},\r\n\t\t\"name\":\"colaboradores\",\r\n\t\t\"description\":\"Colaboradores Trixlog 2\",\r\n\t\t\"email\":\"qualidade@trixlog.com\",\r\n\t\t\"phone\":\"+55 88765756745674\",\r\n\t\t\"tags\":\"\"\r\n\t},\r\n\t\"email\":\"teste@mail.com\",\r\n\t\"groups\":[{\"id\":44}]\r\n}", 
+      "skipped": false, 
+      "form": {}, 
+      "url": "https://qa-trix2.trixlog.com/trix/user", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "CREATE USER SAME LOGIN", 
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      }, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": "400", 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "POST"
+    }, 
+    {
+      "body": "{\r\n\t\"phone\":\"+55 \",\r\n\t\"name\":\"teste\",\r\n\t\"login\":\"renan@teste\",\r\n\t\"password\":\"teste\",\r\n\t\"organization\": {\r\n\t\t\"id\":1,\r\n\t\t\"parentOrganization\": {\r\n\t\t\t\"id\":10020\r\n\t\t},\r\n\t\t\"name\":\"colaboradores\",\r\n\t\t\"description\":\"Colaboradores Trixlog 2\",\r\n\t\t\"email\":\"qualidade@trixlog.com\",\r\n\t\t\"phone\":\"+55 88765756745674\",\r\n\t\t\"tags\":\"\"\r\n\t},\r\n\t\"groups\":[{\"id\":44}]\r\n}", 
+      "skipped": false, 
+      "form": {}, 
+      "url": "https://qa-trix2.trixlog.com/trix/user", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "CREATE USER SAME WITHOUT EMAIL", 
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      }, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": "400", 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "POST"
+    }, 
+    {
+      "body": "{\r\n\t\"id\":{{user_id}},\r\n\t\"name\":\"Renan Alves\",\r\n\t\"login\":\"renan@alves\",\r\n\t\"organization\": {\r\n\t\t\"id\":1,\r\n\t\t\"parentOrganization\": {\r\n\t\t\t\"id\":10020,\r\n\t\t\t\"name\":\"Trixlog\",\r\n\t\t\t\"description\":\"Trixlog\",\r\n\t\t\t\"email\":\"trixlog@trixlog.com\"\r\n\t\t},\r\n\t\t\"name\":\"colaboradores\",\r\n\t\t\"description\":\"Colaboradores Trixlog 2\",\r\n\t\t\"email\":\"qualidade@trixlog.com\",\r\n\t\t\"phone\":\"+55 88765756745674\",\r\n\t\t\"tags\":\"\"\r\n\t},\r\n\t\"groups\":[{\"id\":1}],\r\n\t\"phone\":\"+55 \",\r\n\t\"email\":\"renan@mail.com\",\r\n\t\"created\":\"{{created}}\",\r\n\t\"lastGroupModified\":\"{{lastGroupModified}}\"\r\n}", 
+      "skipped": false, 
+      "form": {}, 
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      }, 
+      "url": "https://qa-trix2.trixlog.com/trix/user/updateUserAndPassword/{{user_id}}", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "note": "EDIT USER ", 
+      "fragment": "", 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": "200", 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "PUT"
+    }, 
+    {
+      "skipped": false, 
+      "url": "http://qa-trix2.trixlog.com/trix/user/{{user_id}}", 
+      "variables": [
+        {
+          "source": "response_json", 
+          "property": "lastGroupModified", 
+          "name": "lastGroupModified"
+        }, 
+        {
+          "source": "response_json", 
+          "property": "created", 
+          "name": "created"
+        }, 
+        {
+          "source": "response_json", 
+          "property": "login", 
+          "name": "new_user_login"
+        }
+      ], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "VALIDATE USER EDIT", 
+      "headers": {}, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "GET"
+    }, 
+    {
+      "skipped": false, 
+      "url": "https://qa-trix2.trixlog.com/trix/logout", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "LOGOUT", 
+      "headers": {}, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "GET"
+    }, 
+    {
+      "body": "{\r\n\"login\": \"{{new_user_login}}\",\r\n\"password\": \"teste\"\r\n}\r\n", 
+      "skipped": false, 
+      "form": {}, 
+      "headers": {}, 
+      "url": "http://qa.trixlog.com/login", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "note": "POST login and password", 
+      "fragment": "", 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [
+        "var data = response.body;\nvariables.set(\"token\", data.slice(46,78));\nvariables.set(\"id\", data.slice(90));\n"
+      ], 
+      "before_scripts": [], 
+      "method": "POST"
+    }, 
+    {
+      "skipped": false, 
+      "url": "http://qa-trix2.trixlog.com/trix//login", 
+      "variables": [
+        {
+          "source": "response_headers", 
+          "property": "Location", 
+          "name": "redirect_url"
+        }
+      ], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "GET redirect_url", 
+      "headers": {}, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": "302", 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [
+        "request.params.push({name: \"token\", value: variables.get(\"token\")});\nrequest.params.push({name: \"customerId\", value: variables.get(\"id\")});"
+      ], 
+      "method": "GET"
+    }, 
+    {
+      "skipped": false, 
+      "url": "{{redirect_url}}", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "redirect to url", 
+      "headers": {}, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "GET"
+    }, 
+    {
+      "body": "[{{user_id}}]", 
+      "skipped": false, 
+      "form": {}, 
+      "url": "http://qa-trix2.trixlog.com/trix/user/bulkDelete", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "", 
+      "headers": {}, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "POST"
+    }, 
+    {
+      "skipped": false, 
+      "headers": {}, 
+      "url": "http://qa-trix2.trixlog.com/trix/user/{{user_id}}", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "note": "VALIDATE USER EDIT", 
+      "fragment": "", 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "GET"
+    }, 
+    {
+      "skipped": false, 
+      "url": "https://qa-trix2.trixlog.com/trix/logout", 
+      "variables": [], 
+      "multipart_form": [], 
+      "step_type": "request", 
+      "auth": {}, 
+      "fragment": "", 
+      "note": "LOGOUT", 
+      "headers": {}, 
+      "assertions": [
+        {
+          "comparison": "equal_number", 
+          "value": 200, 
+          "source": "response_status"
+        }
+      ], 
+      "scripts": [], 
+      "before_scripts": [], 
+      "method": "GET"
+    }
+  ], 
+  "description": null
+}
